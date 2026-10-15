@@ -1,0 +1,23 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isLuquiOrLali() {
+      return request.auth != null
+        && request.auth.uid in [
+          '4XtWwxBAi7VLbFat1mNqhUceTU82',
+          'fBM0BU6E2pWeuG4TSJuV6PHd3mk1'
+        ];
+    }
+
+    // Único documento compartido de la app.
+    match /sharedRooms/luqui-lali-private {
+      allow read, write: if isLuquiOrLali();
+    }
+
+    // Todo lo demás queda bloqueado.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
